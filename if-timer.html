@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>วันนี้ทำ 16:8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Taviraj:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #15130F;
+    --card: #1E1B15;
+    --card-2: #221E17;
+    --line: #332D21;
+    --text: #F2ECDE;
+    --muted: #9C9481;
+    --muted-2: #6E6858;
+    --amber: #E8A33D;
+    --amber-deep: #C97A2B;
+    --amber-dim: rgba(232,163,61,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: radial-gradient(ellipse at 50% -10%, #201C15 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: 'Sarabun', sans-serif;
+    min-height: 100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 32px 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap{
+    width: 100%;
+    max-width: 480px;
+  }
+  .eyebrow{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    margin-bottom: 14px;
+  }
+  .eyebrow .dot{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--amber);
+    box-shadow: 0 0 8px var(--amber);
+  }
+  h1{
+    font-family:'Taviraj', serif;
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 1.15;
+    margin-bottom: 6px;
+    display:flex;
+    align-items:baseline;
+    flex-wrap: wrap;
+    gap: 0 10px;
+  }
+  h1 .num{
+    font-family:'Space Mono', monospace;
+    font-weight: 700;
+    color: var(--amber);
+  }
+  .preset-row{
+    display:flex;
+    gap: 8px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
+  .preset-btn{
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-family:'Space Mono', monospace;
+    font-size: 13px;
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .preset-btn:hover{
+    border-color: var(--amber-deep);
+    color: var(--text);
+  }
+  .preset-btn.active{
+    background: var(--amber-dim);
+    border-color: rgba(232,163,61,0.5);
+    color: var(--amber);
+  }
+  .ratio-field{
+    margin-bottom: 22px;
+  }
+  .ratio-field label{
+    display:block;
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .ratio-row{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .ratio-input-group{
+    display:flex;
+    align-items:center;
+    background: #14120D;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow:hidden;
+  }
+  .ratio-step{
+    background: transparent;
+    border:none;
+    color: var(--muted);
+    width: 34px;
+    height: 46px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: color .15s ease;
+  }
+  .ratio-step:hover{ color: var(--amber); }
+  #fast-hours-input{
+    width: 46px;
+    text-align:center;
+    background: transparent;
+    border:none;
+    outline:none;
+    color: var(--text);
+    font-family:'Space Mono', monospace;
+    font-size: 20px;
+  }
+  .ratio-arrow{
+    color: var(--muted-2);
+    font-size: 13px;
+  }
+  .ratio-eat-display{
+    font-family:'Space Mono', monospace;
+    font-size: 20px;
+    color: var(--amber);
+    background: var(--amber-dim);
+    border: 1px solid rgba(232,163,61,0.3);
+    border-radius: 10px;
+    padding: 10px 16px;
+    min-width: 46px;
+    text-align:center;
+  }
+  .ratio-unit{
+    font-size: 12.5px;
+    color: var(--muted-2);
+  }
+  .sub{
+    color: var(--muted);
+    font-size: 14.5px;
+    margin-bottom: 28px;
+  }
+  .card{
+    background: linear-gradient(180deg, var(--card), var(--card-2));
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 26px 24px 24px;
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,0.6);
+  }
+  .field label{
+    display:block;
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .time-row{
+    display:flex;
+    gap:10px;
+  }
+  .time-picker{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    background: #14120D;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 4px 10px;
+    transition: border-color .15s ease;
+  }
+  .time-picker:focus-within{
+    border-color: var(--amber-deep);
+  }
+  .time-picker select{
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family:'Space Mono', monospace;
+    font-size: 22px;
+    padding: 12px 4px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .time-picker select option{
+    background: #14120D;
+    color: var(--text);
+  }
+  .time-picker .colon{
+    font-family:'Space Mono', monospace;
+    font-size: 22px;
+    color: var(--muted-2);
+  }
+  .time-picker .suffix{
+    font-size: 13px;
+    color: var(--muted-2);
+    margin-left: 2px;
+  }
+  .now-btn{
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 0 16px;
+    font-family:'Sarabun', sans-serif;
+    font-size: 13.5px;
+    cursor:pointer;
+    transition: all .15s ease;
+    white-space:nowrap;
+  }
+  .now-btn:hover{
+    border-color: var(--amber-deep);
+    color: var(--amber);
+  }
+
+  /* Timeline */
+  .timeline-block{
+    margin-top: 28px;
+  }
+  .timeline-labels{
+    display:flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--muted-2);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 8px;
+  }
+  .timeline{
+    position: relative;
+    height: 14px;
+    border-radius: 8px;
+    overflow: visible;
+    display:flex;
+    background: repeating-linear-gradient(
+      115deg,
+      #201C15,
+      #201C15 6px,
+      #251F16 6px,
+      #251F16 12px
+    );
+    border: 1px solid var(--line);
+  }
+  .zone-eat{
+    position:absolute;
+    top:0; bottom:0;
+    border-radius: 8px;
+    background: linear-gradient(90deg, var(--amber-deep), var(--amber));
+    box-shadow: 0 0 18px 0 rgba(232,163,61,0.35);
+  }
+  .now-dot{
+    position:absolute;
+    top: 50%;
+    width: 14px; height:14px;
+    border-radius: 50%;
+    background: var(--text);
+    border: 3px solid var(--bg);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 2px var(--amber);
+    transition: left .3s ease;
+  }
+  .now-dot.lit{
+    box-shadow: 0 0 0 2px var(--amber), 0 0 14px 3px rgba(232,163,61,0.7);
+  }
+  .zone-caption{
+    display:flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted-2);
+    margin-top: 10px;
+  }
+  .zone-caption span.f{color:var(--muted);}
+  .zone-caption span.e{color:var(--amber);}
+
+  /* Stats */
+  .stats{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 26px;
+  }
+  .stat{
+    background: #17140F;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .stat .label{
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .stat .value{
+    font-family: 'Space Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .stat.highlight{
+    background: var(--amber-dim);
+    border-color: rgba(232,163,61,0.3);
+  }
+  .stat.highlight .value{
+    color: var(--amber);
+  }
+  .stat .tag{
+    display:inline-block;
+    margin-left: 6px;
+    font-size: 10.5px;
+    font-family:'Sarabun', sans-serif;
+    color: var(--muted-2);
+    vertical-align: middle;
+  }
+
+  .countdown-block{
+    margin-top: 16px;
+    text-align:center;
+    padding: 18px 10px 4px;
+    border-top: 1px dashed var(--line);
+  }
+  .countdown-label{
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .countdown{
+    font-family: 'Space Mono', monospace;
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .countdown.ready{
+    color: var(--amber);
+  }
+  .countdown-note{
+    font-size: 12.5px;
+    color: var(--muted-2);
+    margin-top: 6px;
+  }
+
+  footer{
+    text-align:center;
+    color: var(--muted-2);
+    font-size: 12px;
+    margin-top: 22px;
+    line-height:1.6;
+  }
+
+  @media (max-width: 380px){
+    h1{font-size: 32px;}
+    .countdown{font-size: 28px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="eyebrow">
+    <span class="dot"></span>
+    <span id="today-date">วันนี้</span>
+  </div>
+  <h1>วันนี้ทำ <span class="num" id="ratio-display">16:8</span></h1>
+  <p class="sub">กรอกเวลาที่กินมื้อสุดท้าย แล้วระบบจะคำนวณเวลาแรกที่กินได้มื้อถัดไป</p>
+
+  <div class="preset-row" id="preset-row">
+    <button class="preset-btn" data-fast="14">14:10</button>
+    <button class="preset-btn" data-fast="16">16:8</button>
+    <button class="preset-btn" data-fast="18">18:6</button>
+    <button class="preset-btn" data-fast="20">20:4</button>
+  </div>
+
+  <div class="card">
+    <div class="ratio-field">
+      <label>ช่วงอด (ชั่วโมง)</label>
+      <div class="ratio-row">
+        <div class="ratio-input-group">
+          <button class="ratio-step" id="fast-minus">−</button>
+          <input type="number" id="fast-hours-input" min="1" max="23" value="16">
+          <button class="ratio-step" id="fast-plus">+</button>
+        </div>
+        <span class="ratio-unit">ชม.</span>
+        <span class="ratio-arrow">→ ช่วงกินได้</span>
+        <div class="ratio-eat-display" id="eat-hours-display">8</div>
+        <span class="ratio-unit">ชม.</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>กินมื้อสุดท้ายตอนกี่โมง</label>
+      <div class="time-row">
+        <div class="time-picker">
+          <select id="last-meal-hour" aria-label="ชั่วโมง"></select>
+          <span class="colon">:</span>
+          <select id="last-meal-min" aria-label="นาที"></select>
+          <span class="suffix">น.</span>
+        </div>
+        <button class="now-btn" id="use-now">ตอนนี้</button>
+      </div>
+    </div>
+
+    <div class="timeline-block">
+      <div class="timeline-labels">
+        <span id="tl-start">20.00</span>
+        <span id="tl-mid">12.00</span>
+        <span id="tl-end">20.00</span>
+      </div>
+      <div class="timeline" id="timeline">
+        <div class="zone-eat" id="zone-eat"></div>
+        <div class="now-dot" id="now-dot"></div>
+      </div>
+      <div class="zone-caption">
+        <span class="f">● ช่วงอด (16 ชม.)</span>
+        <span class="e">● ช่วงกินได้ (8 ชม.)</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="label">เริ่มอดอาหาร</div>
+        <div class="value" id="stat-start">20.00 น.</div>
+      </div>
+      <div class="stat highlight">
+        <div class="label">มื้อแรกถัดไป</div>
+        <div class="value" id="stat-next">12.00 น.<span class="tag" id="stat-next-tag"></span></div>
+      </div>
+    </div>
+
+    <div class="countdown-block">
+      <div class="countdown-label">เหลือเวลาอีก</div>
+      <div class="countdown" id="countdown">--:--:--</div>
+      <div class="countdown-note" id="countdown-note"></div>
+    </div>
+  </div>
+
+  <footer>คำนวณจากการอด 16 ชั่วโมง หลังมื้ออาหารสุดท้าย</footer>
+</div>
+
+<script>
+const CYCLE_HOURS = 24;
+let FAST_HOURS = 16;
+
+const fastHoursInput = document.getElementById('fast-hours-input');
+const fastMinusBtn = document.getElementById('fast-minus');
+const fastPlusBtn = document.getElementById('fast-plus');
+const eatHoursDisplay = document.getElementById('eat-hours-display');
+const ratioDisplay = document.getElementById('ratio-display');
+const presetRow = document.getElementById('preset-row');
+
+const hourSelect = document.getElementById('last-meal-hour');
+const minSelect = document.getElementById('last-meal-min');
+const useNowBtn = document.getElementById('use-now');
+const todayDateEl = document.getElementById('today-date');
+const zoneEat = document.getElementById('zone-eat');
+const nowDot = document.getElementById('now-dot');
+const tlStart = document.getElementById('tl-start');
+const tlMid = document.getElementById('tl-mid');
+const tlEnd = document.getElementById('tl-end');
+const statStart = document.getElementById('stat-start');
+const statNext = document.getElementById('stat-next');
+const statNextTag = document.getElementById('stat-next-tag');
+const countdownEl = document.getElementById('countdown');
+const countdownNote = document.getElementById('countdown-note');
+
+const thaiMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+
+function pad(n){ return n.toString().padStart(2,'0'); }
+
+// Build 24-hour-only hour/minute dropdowns (no native AM/PM anywhere)
+function populateTimePicker(defaultHour, defaultMin){
+  for (let h = 0; h < 24; h++){
+    const opt = document.createElement('option');
+    opt.value = h;
+    opt.textContent = pad(h);
+    hourSelect.appendChild(opt);
+  }
+  for (let m = 0; m < 60; m++){
+    const opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = pad(m);
+    minSelect.appendChild(opt);
+  }
+  hourSelect.value = defaultHour;
+  minSelect.value = defaultMin;
+}
+populateTimePicker(20, 0);
+
+function clampFastHours(v){
+  if (isNaN(v)) v = 16;
+  return Math.min(23, Math.max(1, Math.round(v)));
+}
+
+function setFastHours(v){
+  FAST_HOURS = clampFastHours(v);
+  fastHoursInput.value = FAST_HOURS;
+  eatHoursDisplay.textContent = CYCLE_HOURS - FAST_HOURS;
+  ratioDisplay.textContent = FAST_HOURS + ':' + (CYCLE_HOURS - FAST_HOURS);
+  [...presetRow.children].forEach(btn => {
+    btn.classList.toggle('active', Number(btn.dataset.fast) === FAST_HOURS);
+  });
+  update();
+}
+
+fastHoursInput.addEventListener('input', () => setFastHours(Number(fastHoursInput.value)));
+fastHoursInput.addEventListener('blur', () => setFastHours(Number(fastHoursInput.value)));
+fastMinusBtn.addEventListener('click', () => setFastHours(FAST_HOURS - 1));
+fastPlusBtn.addEventListener('click', () => setFastHours(FAST_HOURS + 1));
+presetRow.addEventListener('click', (e) => {
+  const btn = e.target.closest('.preset-btn');
+  if (!btn) return;
+  setFastHours(Number(btn.dataset.fast));
+});
+
+function formatThaiTime(date){
+  return pad(date.getHours()) + '.' + pad(date.getMinutes()) + ' น.';
+}
+
+function formatTimelineTime(date){
+  return pad(date.getHours()) + '.' + pad(date.getMinutes());
+}
+
+function setTodayLabel(){
+  const now = new Date();
+  const buddhistYear = now.getFullYear() + 543;
+  todayDateEl.textContent = 'วันนี้ · ' + now.getDate() + ' ' + thaiMonths[now.getMonth()] + ' ' + buddhistYear;
+}
+
+// Returns the most recent occurrence of the given HH:MM that is <= now
+function getLastMealDate(h, m){
+  const now = new Date();
+  const candidate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
+  if (candidate > now){
+    candidate.setDate(candidate.getDate() - 1);
+  }
+  return candidate;
+}
+
+function update(){
+  const h = Number(hourSelect.value);
+  const m = Number(minSelect.value);
+  const lastMeal = getLastMealDate(h, m);
+  const nextMeal = new Date(lastMeal.getTime() + FAST_HOURS * 60 * 60 * 1000);
+  const cycleEnd = new Date(lastMeal.getTime() + CYCLE_HOURS * 60 * 60 * 1000);
+  const now = new Date();
+
+  // Timeline labels
+  tlStart.textContent = formatTimelineTime(lastMeal);
+  tlMid.textContent = formatTimelineTime(nextMeal);
+  tlEnd.textContent = formatTimelineTime(cycleEnd);
+
+  // Eating zone: from FAST_HOURS/CYCLE_HOURS to 100%
+  const eatStartPct = (FAST_HOURS / CYCLE_HOURS) * 100;
+  zoneEat.style.left = eatStartPct + '%';
+  zoneEat.style.right = '0%';
+
+  // Now dot position within the 24h cycle
+  let elapsedMs = now.getTime() - lastMeal.getTime();
+  let cycleMs = CYCLE_HOURS * 60 * 60 * 1000;
+  let posFraction = (elapsedMs % cycleMs) / cycleMs;
+  nowDot.style.left = (posFraction * 100) + '%';
+
+  const isEatingWindow = now >= nextMeal && now < cycleEnd;
+  nowDot.classList.toggle('lit', isEatingWindow);
+
+  // Stats
+  statStart.textContent = formatThaiTime(lastMeal);
+  statNext.childNodes[0].nodeValue = formatThaiTime(nextMeal);
+  const sameDay = nextMeal.toDateString() === new Date().toDateString();
+  statNextTag.textContent = sameDay ? '' : '(พรุ่งนี้)';
+
+  // Countdown
+  const diffMs = nextMeal.getTime() - now.getTime();
+  if (diffMs <= 0){
+    countdownEl.textContent = 'ถึงเวลาทานได้แล้ว';
+    countdownEl.classList.add('ready');
+    const eatingEndsIn = cycleEnd.getTime() - now.getTime();
+    if (eatingEndsIn > 0){
+      const h = Math.floor(eatingEndsIn / 3600000);
+      const m = Math.floor((eatingEndsIn % 3600000) / 60000);
+      countdownNote.textContent = 'ช่วงกินได้อีก ' + h + ' ชม. ' + m + ' นาที ก่อนเริ่มอดรอบใหม่';
+    } else {
+      countdownNote.textContent = '';
+    }
+  } else {
+    countdownEl.classList.remove('ready');
+    const h = Math.floor(diffMs / 3600000);
+    const m = Math.floor((diffMs % 3600000) / 60000);
+    const s = Math.floor((diffMs % 60000) / 1000);
+    countdownEl.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+    countdownNote.textContent = 'จนกว่าจะถึงมื้อแรกที่กินได้';
+  }
+}
+
+useNowBtn.addEventListener('click', () => {
+  const now = new Date();
+  hourSelect.value = now.getHours();
+  minSelect.value = now.getMinutes();
+  update();
+});
+
+hourSelect.addEventListener('change', update);
+minSelect.addEventListener('change', update);
+
+setTodayLabel();
+setFastHours(16);
+update();
+setInterval(update, 1000);
+</script>
+
+</body>
+</html>
